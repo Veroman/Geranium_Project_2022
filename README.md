@@ -47,7 +47,7 @@ prokka --outdir <PATH>$N --prefix $N --genus Xanthomonas \
 # Nanopore assembly
 ## Guppy
 ```bash
-#basecalling, changes file type to fastq
+#basecalling, changes file type to fastq. We use the Rapid Barcoding Kit (RBK004)
 cd guppy_612/ont-guppy-cpu/
 ont-guppy-cpu/bin/guppy_basecaller \
 -i <input_dir> \
@@ -58,7 +58,7 @@ ont-guppy-cpu/bin/guppy_basecaller \
 ```
 ## Flye
 ```bash
-#flye assembles the genome with raw reads
+#flye assembles the genome with raw long reads
 source activate <env>
 flye \
 --nano-hq rawreads/genome1.fastq \
@@ -68,12 +68,13 @@ flye \
 ```
 ## homopolish
 ```bash
-#polishes assembled genome
+#polishes assembled genome. We are using Nanopore reads.
 homopolish polish -a <input_file> -g Xanthomonas -m /homopolish/R9.4.pkl -d -o <output_dir>
 ```
 # Metagenome Analysis
 ## Kraken
 ```bash
+#For Kraken2 we used a premade databases that includes Bacteria,Fungi,and viruses.
 cd /kraken2/kraken2-2.1.2/
 for i in $(ls <input_dir>*fastq.gz | grep "_R1" | cut -f 1 -d "_"); do N=$(basename $i .fastq.gz); \
 ./kraken2-2.1.2/kraken2 --db <kraken_db> --gzip-compressed \
@@ -84,6 +85,7 @@ ${i}_R1.fastq ${i}_R2.fastq;done
 ```
 ## Kaiju
 ```bash
+#the proteins were downloaded from Uniprot
 cd <PATH>/kaiju/bin
 ./kaiju-mkbwt -n 5 -a ACDEFGHIKLMNPQRSTVWY -o <output_dir> <fasta_path>
 ./kaiju-mkfmi <output_dir>
@@ -94,7 +96,7 @@ for i in $(ls <raw_data_dir>*.fastq | grep "_R1" | cut -f 1 -d "_");do N=$(basen
 ```
 ## Krona
 ```bash
-#change kaiju files into kraken files
+#Visualize Kaiju files with krona
 for i in <kraken_output_dir>*.out;do N=$(basename $i .out); \
 ./kaiju2krona -i $i -o <kraken_output_dir>/$N.krona \
 -t /proteins/nodes.dmp \
